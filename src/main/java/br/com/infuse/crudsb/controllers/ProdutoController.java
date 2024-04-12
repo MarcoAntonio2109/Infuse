@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.infuse.crudsb.dto.ProdutoDTO;
@@ -30,44 +30,44 @@ public class ProdutoController {
 	@Autowired
 	private ProdutoService service;
 	
-	@PostMapping(path = "/cadastra-produto")
+	@PostMapping
 	public ResponseEntity<RetornoDTO> cadastraProduto(@RequestBody @Valid ProdutoDTO dto) { 
 		try {
 			return ResponseEntityUtil.defaultResponse(service.cadastraProduto(dto));
 		}catch (ProdutoException e) {
 			logger.error(e.getMessage());
-	        return ResponseEntityUtil.defaultResponse(e.getMessage());
+	        return ResponseEntityUtil.retornaErro(e.getMessage());
 		}
 	}
 	
-	@PutMapping(path = "/atualiza-produto")
+	@PutMapping
 	public ResponseEntity<RetornoDTO> atualizaCliente(@RequestBody @Valid ProdutoDTO dto) { 
 		try {
 			return ResponseEntityUtil.defaultResponse(service.atualizaProduto(dto));
 		}catch (ProdutoException e) {
 			logger.error(e.getMessage());
-	        return ResponseEntityUtil.defaultResponse(e.getMessage());
+	        return ResponseEntityUtil.retornaErro(e.getMessage());
 		}
 	}
 	
-	@GetMapping(path = "/busca-todos-produtos")
+	@GetMapping
 	public ResponseEntity<RetornoDTO> buscaTodosClientes() throws ProdutoException {
 		return ResponseEntityUtil.defaultResponse(service.buscaTodos());
 	}	
 	
-	@GetMapping(path = "/obtem-produto-por-id")
-	public ResponseEntity<RetornoDTO> obtemProdutoPorId(@RequestParam(name = "id", required=true) Long id) {		
+	@GetMapping(path = "{id}")
+	public ResponseEntity<RetornoDTO> obtemProdutoPorId(@PathVariable Long id) {		
 		return ResponseEntityUtil.defaultResponse(service.obtemProdutoPorId(id));
 	}
 	
-	@DeleteMapping(path = "/exclui-produto-por-id")
-	public ResponseEntity<RetornoDTO> excluiProdutoPorId(@RequestParam(name = "id", required=true) Long id) {	
+	@DeleteMapping(path = "{id}")
+	public ResponseEntity<RetornoDTO> excluiProdutoPorId(@PathVariable Long id) {	
 		
 		try {
 			service.excluiProdutoPorId(id);			
 		}catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntityUtil.defaultResponse("Erro ao excluir Produto.");
+			return ResponseEntityUtil.retornaErro(e.getMessage());
 		}
 		return ResponseEntityUtil.defaultResponse("Produto excluido com sucesso.");
 	}	

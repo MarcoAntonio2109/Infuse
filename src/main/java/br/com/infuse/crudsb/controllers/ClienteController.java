@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.infuse.crudsb.dto.ClienteDTO;
@@ -32,7 +32,7 @@ public class ClienteController {
 	@Autowired
 	private ClienteService service;
 	
-	@PostMapping(path = "/cadastra-cliente")
+	@PostMapping
 	public ResponseEntity<RetornoDTO> cadastraCliente(@RequestBody @Valid ClienteDTO dto) { 
 		try {
 			return ResponseEntityUtil.defaultResponse(service.cadastraCliente(dto));
@@ -42,7 +42,7 @@ public class ClienteController {
 		}
 	}
 	
-	@PutMapping(path = "/atualiza-cliente")
+	@PutMapping
 	public ResponseEntity<RetornoDTO> atualizaCliente(@RequestBody @Valid ClienteDTO dto) { 
 		try {
 			return ResponseEntityUtil.defaultResponse(service.atualizaCliente(dto));
@@ -52,24 +52,24 @@ public class ClienteController {
 		}
 	}
 	
-	@GetMapping(path = "/busca-todos-clientes")
+	@GetMapping
 	public ResponseEntity<RetornoDTO> buscaTodosClientes() throws ClienteException {
 		return ResponseEntityUtil.defaultResponse(service.buscaTodos());
 	}	
 	
-	@GetMapping(path = "/obtem-cliente-por-id")
-	public ResponseEntity<RetornoDTO> obtemClientePorId(@RequestParam(name = "id", required=true) Long id) {		
+	@GetMapping(path = "/{id}")
+	public ResponseEntity<RetornoDTO> obtemClientePorId(@PathVariable Long id) {		
 		return ResponseEntityUtil.defaultResponse(service.obtemClientePorId(id));
 	}
 	
-	@DeleteMapping(path = "/exclui-cliente-por-id")
-	public ResponseEntity<RetornoDTO> excluiClientePorId(@RequestParam(name = "id", required=true) Long id) {	
+	@DeleteMapping(path = "{id}")
+	public ResponseEntity<RetornoDTO> excluiClientePorId(@PathVariable Long id) {	
 		
 		try {
 			service.excluiClientePorId(id);			
 		}catch (Exception e) {
 			logger.error(e.getMessage());
-			return ResponseEntityUtil.defaultResponse("Erro ao excluir Cliente.");
+			return ResponseEntityUtil.retornaErro(e.getMessage());
 		}
 		return ResponseEntityUtil.defaultResponse("Cliente excluido com sucesso.");
 	}	

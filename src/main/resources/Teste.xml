@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pedido>
+    <numControle>32479</numControle>
+    <produto>1</produto>
+    <quantidade>10</quantidade>
+    <cliente>1</cliente>
+    <data>2024-04-11T14:33:08</data>
+</pedido>

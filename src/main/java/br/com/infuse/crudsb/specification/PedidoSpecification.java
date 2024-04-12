@@ -10,16 +10,16 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import br.com.infuse.crudsb.dto.PedidosDTO;
+import br.com.infuse.crudsb.dto.ConsultaPedidoDTO;
 import br.com.infuse.crudsb.entities.Pedido;
 
 
 public class PedidoSpecification implements Specification<Pedido> {
 
 	private static final long serialVersionUID = -7956851914498818275L;
-	private final PedidosDTO dto;
+	private final ConsultaPedidoDTO dto;
 
-    public PedidoSpecification(PedidosDTO dto) {
+    public PedidoSpecification(ConsultaPedidoDTO dto) {
         this.dto = dto;
     }
 

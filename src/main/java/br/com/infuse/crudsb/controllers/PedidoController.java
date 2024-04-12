@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.infuse.crudsb.dto.ConsultaPedidoDTO;
 import br.com.infuse.crudsb.dto.PedidosDTO;
 import br.com.infuse.crudsb.dto.RetornoDTO;
 import br.com.infuse.crudsb.exception.PedidoException;
@@ -32,36 +34,36 @@ public class PedidoController {
 	@Autowired
 	private PedidoService service;
 	
-	@GetMapping(path = "/busca-pedidos-por-parametros")
-	public ResponseEntity<RetornoDTO> buscaPedidos(@RequestBody @Valid PedidosDTO dto) {		
+	@GetMapping(path = "/pedidos-por-parametros")
+	public ResponseEntity<RetornoDTO> buscaPedidos(@RequestBody ConsultaPedidoDTO dto) {		
 		try {	
 			return ResponseEntityUtil.defaultResponse(service.buscaPedido(dto));
 		}catch (PedidoException e) {
 			logger.error(e.getMessage());
-			 return ResponseEntityUtil.defaultResponse(e.getMessage());
+			 return ResponseEntityUtil.retornaErro(e.getMessage());
 		}
 	}	
 	
-	@GetMapping(path = "/busca-pedido-por-id")
-	public ResponseEntity<RetornoDTO> findById(@RequestParam(name = "id", required=true) Long id) throws PedidoException {		
+	@GetMapping(path = "{id}")
+	public ResponseEntity<RetornoDTO> findById(@PathVariable Long id) throws PedidoException {		
 		return ResponseEntityUtil.defaultResponse(service.findById(id));
 	}	
 	
-	@PostMapping(path = "/realiza-pedido")
+	@PostMapping
 	public ResponseEntity<RetornoDTO> criaPedido(@RequestBody @Valid PedidosDTO dto) { 
 		try {
 			return ResponseEntityUtil.defaultResponse(service.criaPedido(dto));
 		}catch (PedidoException e) {
 			logger.error(e.getMessage());
-	        return ResponseEntityUtil.defaultResponse(e.getMessage());
+	        return ResponseEntityUtil.retornaErro(e.getMessage());
 		}
 	}	
 	
-    @PostMapping("/realiza-pedido-xml")
-    public ResponseEntity<RetornoDTO> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/pedido-xml")
+    public ResponseEntity<RetornoDTO> criaPedidoXml(@RequestParam("file") MultipartFile file) {
     	String xml = "";
         if (file.isEmpty()) {
-            return ResponseEntityUtil.defaultResponse("O arquivo enviado está vazio");
+            return ResponseEntityUtil.retornaErro("O arquivo enviado está vazio");
         }
         try ( BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))){
         	
@@ -72,7 +74,7 @@ public class PedidoController {
             return ResponseEntityUtil.defaultResponse(service.criaPedidoXml(xml));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntityUtil.defaultResponse(e.getMessage());
+            return ResponseEntityUtil.retornaErro(e.getMessage());
         }
         
     }

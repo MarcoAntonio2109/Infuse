@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import br.com.infuse.crudsb.dto.ConsultaPedidoDTO;
 import br.com.infuse.crudsb.dto.PedidoMapperXML;
 import br.com.infuse.crudsb.dto.PedidosDTO;
 import br.com.infuse.crudsb.entities.Cliente;
@@ -40,7 +41,7 @@ public class PedidoService {
 	@Autowired
 	private ProdutoService produtoService;
 	
-	public List<Pedido> buscaPedido (PedidosDTO dto) throws PedidoException {		
+	public List<Pedido> buscaPedido (ConsultaPedidoDTO dto) throws PedidoException {		
 		Specification<Pedido> specification = new PedidoSpecification(dto);
 		return repository.findAll(specification);		
 	}

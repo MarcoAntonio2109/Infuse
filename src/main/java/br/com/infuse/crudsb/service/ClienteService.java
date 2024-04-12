@@ -37,7 +37,7 @@ public class ClienteService {
 	public Cliente cadastraCliente(@Valid ClienteDTO dto) throws ClienteException {
 		try {
 			if(repository.validaCpfExistente(dto.getCpf())>0) {
-				throw new ClienteException("Número de controle Informado no pedido já existe.");
+				throw new ClienteException("Número de CPF informado já existe.");
 			}
 			Cliente cliente = new Cliente();
 			cliente.setCpf(dto.getCpf());
@@ -57,12 +57,14 @@ public class ClienteService {
 			if(dto.getCodigo() == null) {
 				throw new ClienteException("Código do Cliente não informado.");
 			}
-			if(repository.validaCpfExistente(dto.getCpf())>0) {
-				throw new ClienteException("Número do CPF Informado no pedido já existe.");
-			}
 			Optional<Cliente> cliente = repository.findById(dto.getCodigo());
 			if(!cliente.isPresent()) {
 				throw new ClienteException("Código do Cliente informado não existe.");
+			}
+			if(!dto.getCpf().equals(cliente.get().getCpf())) {
+				if (repository.validaCpfExistente(dto.getCpf()) > 0) {
+					throw new ClienteException("Número do CPF Informado já existe.");
+				}				
 			}
 			cliente.get().setCpf(dto.getCpf());
 			cliente.get().setNome(dto.getNome());

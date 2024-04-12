@@ -38,9 +38,9 @@ public final class ResponseEntityUtil {
 		return new ResponseEntity<>(retorno, retorno.getStatus());
 	}
 
-	public static ResponseEntity<RetornoDTO> retornaSucesso() {
+	public static ResponseEntity<RetornoDTO> retornaErro(String msg) {
 
-		RetornoDTO retorno = new RetornoDTO(HttpStatus.OK, true);
+		RetornoDTO retorno = new RetornoDTO(HttpStatus.BAD_REQUEST, msg);
 
 		return new ResponseEntity<>(retorno, retorno.getStatus());
 

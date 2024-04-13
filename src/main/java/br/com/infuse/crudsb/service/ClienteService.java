@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.infuse.crudsb.dto.ClienteDTO;
-import br.com.infuse.crudsb.entities.Cliente;
+import br.com.infuse.crudsb.entitiy.Cliente;
 import br.com.infuse.crudsb.exception.ClienteException;
-import br.com.infuse.crudsb.repositories.ClienteRepository;
+import br.com.infuse.crudsb.repository.ClienteRepository;
 import br.com.infuse.crudsb.util.Util;
 
 @Service
@@ -54,29 +54,40 @@ public class ClienteService {
 
 	public Cliente atualizaCliente(@Valid ClienteDTO dto) throws ClienteException {
 		try {
-			if(dto.getCodigo() == null) {
-				throw new ClienteException("Código do Cliente não informado.");
-			}
+			validaCodigoCliente(dto.getCodigo());
 			Optional<Cliente> cliente = repository.findById(dto.getCodigo());
-			if(!cliente.isPresent()) {
-				throw new ClienteException("Código do Cliente informado não existe.");
-			}
-			if(!dto.getCpf().equals(cliente.get().getCpf())) {
-				if (repository.validaCpfExistente(dto.getCpf()) > 0) {
-					throw new ClienteException("Número do CPF Informado já existe.");
-				}				
-			}
-			cliente.get().setCpf(dto.getCpf());
-			cliente.get().setNome(dto.getNome());
-			cliente.get().setSobrenome(dto.getSobrenome());
-			cliente.get().setDataNascimento(Util.converterStringParaData(dto.getDataNascimento()));
+			validaCpfCliente(dto, cliente.get());
+			atualizaDadosCliente(dto, cliente.get());
 
 			return repository.save(cliente.get());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
-			throw new ClienteException(e.getMessage());			
+			throw new ClienteException(e.getMessage());
 		}
-	
+	}
+
+	private void validaCodigoCliente(Long codigo) throws ClienteException {
+		if(codigo == null) {
+			throw new ClienteException("Código do Cliente não informado.");
+		}
+		if(!repository.existsById(codigo)) {
+			throw new ClienteException("Código do Cliente informado não existe.");
+		}
+	}
+
+	private void validaCpfCliente(ClienteDTO dto, Cliente cliente) throws ClienteException {
+	    if (!dto.getCpf().equals(cliente.getCpf())) {
+	        if (repository.validaCpfExistente(dto.getCpf()) > 0) {
+	            throw new ClienteException("Número do CPF Informado já existe.");
+	        }
+	    }
+	}
+
+	private void atualizaDadosCliente(ClienteDTO dto, Cliente cliente) {
+		cliente.setCpf(dto.getCpf());
+		cliente.setNome(dto.getNome());
+		cliente.setSobrenome(dto.getSobrenome());
+		cliente.setDataNascimento(Util.converterStringParaData(dto.getDataNascimento()));
 	}
 
 	public void excluiClientePorId(Long id) {

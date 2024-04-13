@@ -1,4 +1,4 @@
-package br.com.infuse.crudsb.dto;
+package br.com.infuse.crudsb.mapper;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

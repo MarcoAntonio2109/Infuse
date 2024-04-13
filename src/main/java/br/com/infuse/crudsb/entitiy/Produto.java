@@ -1,4 +1,4 @@
-package br.com.infuse.crudsb.entities;
+package br.com.infuse.crudsb.entitiy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

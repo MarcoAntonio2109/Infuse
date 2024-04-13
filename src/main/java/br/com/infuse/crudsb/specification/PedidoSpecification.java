@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import br.com.infuse.crudsb.dto.ConsultaPedidoDTO;
-import br.com.infuse.crudsb.entities.Pedido;
+import br.com.infuse.crudsb.entitiy.Pedido;
 
 
 public class PedidoSpecification implements Specification<Pedido> {

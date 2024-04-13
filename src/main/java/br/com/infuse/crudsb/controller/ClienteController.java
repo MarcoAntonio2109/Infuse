@@ -1,4 +1,4 @@
-package br.com.infuse.crudsb.controllers;
+package br.com.infuse.crudsb.controller;
 
 import javax.validation.Valid;
 
@@ -62,7 +62,7 @@ public class ClienteController {
 		return ResponseEntityUtil.defaultResponse(service.obtemClientePorId(id));
 	}
 	
-	@DeleteMapping(path = "{id}")
+	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<RetornoDTO> excluiClientePorId(@PathVariable Long id) {	
 		
 		try {

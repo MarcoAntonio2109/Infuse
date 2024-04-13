@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PedidosDTO {
+public class PedidoDTO {
 	
 	@NotNull(message = "O campo NUMERO CONTROLE não pode estar vazio.")
 	private Long numControle;

@@ -1,4 +1,4 @@
-package br.com.infuse.crudsb.controllers;
+package br.com.infuse.crudsb.controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.infuse.crudsb.dto.ConsultaPedidoDTO;
-import br.com.infuse.crudsb.dto.PedidosDTO;
+import br.com.infuse.crudsb.dto.PedidoDTO;
 import br.com.infuse.crudsb.dto.RetornoDTO;
 import br.com.infuse.crudsb.exception.PedidoException;
 import br.com.infuse.crudsb.service.PedidoService;
@@ -50,7 +50,7 @@ public class PedidoController {
 	}	
 	
 	@PostMapping
-	public ResponseEntity<RetornoDTO> criaPedido(@RequestBody @Valid PedidosDTO dto) { 
+	public ResponseEntity<RetornoDTO> criaPedido(@RequestBody @Valid PedidoDTO dto) { 
 		try {
 			return ResponseEntityUtil.defaultResponse(service.criaPedido(dto));
 		}catch (PedidoException e) {

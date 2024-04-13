@@ -2,13 +2,18 @@ package br.com.infuse.crudsb.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
@@ -19,15 +24,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.jpa.domain.Specification;
 
-import br.com.infuse.crudsb.dto.PedidoMapperXML;
-import br.com.infuse.crudsb.dto.PedidosDTO;
-import br.com.infuse.crudsb.entities.Pedido;
+import br.com.infuse.crudsb.dto.PedidoDTO;
+import br.com.infuse.crudsb.entitiy.Cliente;
+import br.com.infuse.crudsb.entitiy.Pedido;
+import br.com.infuse.crudsb.entitiy.Produto;
 import br.com.infuse.crudsb.exception.PedidoException;
-import br.com.infuse.crudsb.repositories.PedidoRepository;
-import br.com.infuse.crudsb.service.ClienteService;
-import br.com.infuse.crudsb.service.PedidoService;
-import br.com.infuse.crudsb.service.ProdutoService;
+import br.com.infuse.crudsb.mapper.PedidoMapperXML;
+import br.com.infuse.crudsb.repository.PedidoRepository;
+import br.com.infuse.crudsb.specification.PedidoSpecification;
 import br.com.infuse.crudsb.util.UtilTest;
 
 public class PedidoServiceTest {
@@ -49,6 +55,31 @@ public class PedidoServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @Test
+    public void testFindById() {
+
+        Pedido pedido = UtilTest.initPedido();
+      
+        when(repository.findById(anyLong())).thenReturn(Optional.of(pedido));
+        Optional<Pedido> result = service.findById(anyLong());
+        assertEquals(Optional.of(pedido), result);
+        verify(repository, times(1)).findById(anyLong());
+    }
+    
+    @Test
+    public void testBuscaPedido() throws PedidoException {
+    	
+        Pedido pedido1 = UtilTest.initPedido();
+        Pedido pedido2 = UtilTest.initPedido();
+        List<Pedido> listaPedidos = Arrays.asList(pedido1, pedido2);
+
+        Specification<Pedido> specification = new PedidoSpecification(any());
+        when(repository.findAll(specification)).thenReturn(listaPedidos);
+
+        List<Pedido> listaRetorno = service.buscaPedido(any());
+        assertEquals(listaPedidos, listaRetorno);
+    }    
+    
     @Test
     public void testCriaPedidoXml() throws Exception {
 
@@ -88,12 +119,8 @@ public class PedidoServiceTest {
     }    
     
     @Test
-    void criaPedido_Teste() throws PedidoException {
-        PedidosDTO dto = new PedidosDTO();
-        dto.setNumControle(123L);
-        dto.setCliente(1L);
-        dto.setProduto(1L);
-        dto.setQuantidade(5);
+    void testCriaPedido() throws PedidoException {
+        PedidoDTO dto = UtilTest.initPedidoDTO();
 
         when(repository.validaNumControleExistente(dto.getNumControle())).thenReturn(0);
         when(clienteService.obtemClientePorId(dto.getCliente())).thenReturn(Optional.of(UtilTest.initCliente()));
@@ -129,14 +156,13 @@ public class PedidoServiceTest {
     void testCalculaPrecoFinalQtdIgual10() throws Exception {
         int quantidade = 10;
         double preco = 100.0;
-        double expected = 900.0;  // (100 * 0.90) * 10
+        double expected = 900.0;
 
         PedidoService pedidoService = new PedidoService();
 
-        // Obtem o método privado usando reflexão
         Method method = PedidoService.class.getDeclaredMethod("calculaPrecoFinal", int.class, Double.class);
-        method.setAccessible(true);  // Permite o acesso ao método privado
-        // Chama o método privado
+        method.setAccessible(true); 
+
         double result = (double) method.invoke(pedidoService, quantidade, preco);
 
         assertEquals(expected, result, 0.01);
@@ -175,5 +201,54 @@ public class PedidoServiceTest {
 
         assertEquals(expected, result, 0.01);
     }	
+    
+    @Test
+    void testNumControleExistenteException() throws PedidoException {
+        PedidoDTO dto = UtilTest.initPedidoDTO();
+
+        when(repository.validaNumControleExistente(dto.getNumControle())).thenReturn(1);
+
+        assertThrows(PedidoException.class, () -> {
+        	service.criaPedido(dto);
+        });
+    }   
+    
+    @Test
+    void testObtemClienteException() throws PedidoException {
+        PedidoDTO dto = UtilTest.initPedidoDTO();
+
+        when(repository.validaNumControleExistente(dto.getNumControle())).thenReturn(0);
+        //when(clienteService.obtemClientePorId(dto.getCliente())).thenReturn(Optional.of(new Cliente()));
+
+        assertThrows(PedidoException.class, () -> {
+        	service.criaPedido(dto);
+        });
+    }     
    
+    @Test
+    void testObtemProdutoException() throws PedidoException {
+        PedidoDTO dto = UtilTest.initPedidoDTO();
+
+        when(repository.validaNumControleExistente(dto.getNumControle())).thenReturn(0);
+        when(clienteService.obtemClientePorId(dto.getCliente())).thenReturn(Optional.of(UtilTest.initCliente()));
+       // when(produtoService.obtemProdutoPorId(dto.getProduto())).thenReturn(Optional.of(new Produto()));
+
+        assertThrows(PedidoException.class, () -> {
+        	service.criaPedido(dto);
+        });
+    } 
+    
+    @Test
+    void testValidaQuantidadeException() throws PedidoException {
+        PedidoDTO dto = UtilTest.initPedidoDTO();
+        dto.setQuantidade(11);
+        
+        when(repository.validaNumControleExistente(dto.getNumControle())).thenReturn(0);
+        when(clienteService.obtemClientePorId(dto.getCliente())).thenReturn(Optional.of(UtilTest.initCliente()));
+        when(produtoService.obtemProdutoPorId(dto.getProduto())).thenReturn(Optional.of(UtilTest.initProduto()));
+
+        assertThrows(PedidoException.class, () -> {
+        	service.criaPedido(dto);
+        });
+    }      
 }

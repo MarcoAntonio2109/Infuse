@@ -3,10 +3,12 @@ package br.com.infuse.crudsb.util;
 import java.util.Date;
 
 import br.com.infuse.crudsb.dto.ClienteDTO;
+import br.com.infuse.crudsb.dto.ConsultaPedidoDTO;
+import br.com.infuse.crudsb.dto.PedidoDTO;
 import br.com.infuse.crudsb.dto.ProdutoDTO;
-import br.com.infuse.crudsb.entities.Cliente;
-import br.com.infuse.crudsb.entities.Pedido;
-import br.com.infuse.crudsb.entities.Produto;
+import br.com.infuse.crudsb.entitiy.Cliente;
+import br.com.infuse.crudsb.entitiy.Pedido;
+import br.com.infuse.crudsb.entitiy.Produto;
 
 public class UtilTest {
 
@@ -61,4 +63,23 @@ public class UtilTest {
 		return pedido;
 	}
 	
+	public static PedidoDTO initPedidoDTO() {
+        PedidoDTO dto = new PedidoDTO();
+        dto.setNumControle(123L);
+        dto.setCliente(1L);
+        dto.setProduto(1L);
+        dto.setQuantidade(5);
+		
+		return dto;
+	}
+	
+	public static ConsultaPedidoDTO initConsultaPedidoDTO() {
+		ConsultaPedidoDTO dto = new ConsultaPedidoDTO();
+        dto.setNumControle(123L);
+        dto.setCliente(1L);
+        dto.setProduto(1L);
+
+		return dto;
+	}	
+
 }

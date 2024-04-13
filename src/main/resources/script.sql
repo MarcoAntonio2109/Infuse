@@ -26,3 +26,7 @@ CREATE TABLE produto (
     nome VARCHAR(255),
     preco DOUBLE
 );
+
+DROP TABLE IF EXISTS Pedido;
+DROP TABLE IF EXISTS Cliente;
+DROP TABLE IF EXISTS Produto;

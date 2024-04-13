@@ -1,4 +1,4 @@
-package br.com.infuse.crudsb.exercises;
+package br.com.infuse.crudsb.exercise;
 
 import java.util.Scanner;
 

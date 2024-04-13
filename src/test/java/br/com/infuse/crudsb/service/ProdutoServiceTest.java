@@ -1,12 +1,17 @@
 package br.com.infuse.crudsb.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +23,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import br.com.infuse.crudsb.dto.ProdutoDTO;
-import br.com.infuse.crudsb.entities.Produto;
+import br.com.infuse.crudsb.entitiy.Produto;
 import br.com.infuse.crudsb.exception.ProdutoException;
-import br.com.infuse.crudsb.repositories.ProdutoRepository;
-import br.com.infuse.crudsb.service.ProdutoService;
+import br.com.infuse.crudsb.repository.ProdutoRepository;
 import br.com.infuse.crudsb.util.UtilTest;
 
 public class ProdutoServiceTest {
@@ -94,4 +98,33 @@ public class ProdutoServiceTest {
 	        verify(repository, times(1)).deleteById(id);
 	    }	    
 	
+	    @Test
+	    public void testBuscaTodosException() {
+	        when(repository.findAll()).thenThrow(new RuntimeException("Erro ao buscar todos os produtos"));
+
+	        assertThrows(ProdutoException.class, () -> {
+	        	service.buscaTodos();
+	        });
+	    }
+
+	    @Test
+	    public void testCadastraProdutoException() {
+
+	        assertThrows(ProdutoException.class, () -> {
+	        	service.cadastraProduto(null);
+	        });
+	    }
+    
+	    
+	    
+	    @Test
+	    public void testAtualizaProdutoException() {
+	        ProdutoDTO dto = new ProdutoDTO();
+	        when(repository.findById(dto.getCodigo())).thenThrow(new RuntimeException("Erro ao atualizar produto"));
+
+	        assertThrows(ProdutoException.class, () -> {
+	        	service.atualizaProduto(dto);
+	        });
+	    }	    
+	    
 }

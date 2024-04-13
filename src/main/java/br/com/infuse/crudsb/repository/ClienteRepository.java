@@ -1,10 +1,10 @@
-package br.com.infuse.crudsb.repositories;
+package br.com.infuse.crudsb.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.infuse.crudsb.entities.Cliente;
+import br.com.infuse.crudsb.entitiy.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 

@@ -1,6 +1,7 @@
 package br.com.infuse.crudsb.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -18,10 +19,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import br.com.infuse.crudsb.dto.ClienteDTO;
-import br.com.infuse.crudsb.entities.Cliente;
+import br.com.infuse.crudsb.entitiy.Cliente;
 import br.com.infuse.crudsb.exception.ClienteException;
-import br.com.infuse.crudsb.repositories.ClienteRepository;
-import br.com.infuse.crudsb.service.ClienteService;
+import br.com.infuse.crudsb.repository.ClienteRepository;
 import br.com.infuse.crudsb.util.Util;
 import br.com.infuse.crudsb.util.UtilTest;
 
@@ -38,6 +38,9 @@ public class ClienteServiceTest {
 	        MockitoAnnotations.initMocks(this);
 	    }
 	    
+
+		    
+	    
 	    @Test
 	    public void testAtualizaCliente() throws ClienteException {
 	    	
@@ -47,6 +50,7 @@ public class ClienteServiceTest {
 	        when(repository.findById(dto.getCodigo())).thenReturn(Optional.of(cliente));
 	        when(repository.validaCpfExistente(dto.getCpf())).thenReturn(0);
 	        when(repository.save(any(Cliente.class))).thenAnswer(i -> i.getArguments()[0]);
+	        when(repository.existsById(any())).thenReturn(true);
 
 	        Cliente clienteAtualizado = service.atualizaCliente(dto);
 
@@ -95,4 +99,60 @@ public class ClienteServiceTest {
 	        verify(repository, times(1)).deleteById(id);
 	    }		    
 	
+	    @Test
+	    public void testBuscaTodosException() {
+	        when(repository.findAll()).thenThrow(new RuntimeException("Erro ao buscar todos os clientes"));
+
+	        assertThrows(ClienteException.class, () -> {service.buscaTodos();});
+	    }
+
+	    @Test
+	    public void testCadastraClienteException() {
+	        ClienteDTO dto = new ClienteDTO();
+	        when(repository.validaCpfExistente(dto.getCpf())).thenReturn(1);
+
+	        assertThrows(ClienteException.class, () -> {service.cadastraCliente(dto);});
+	    }
+
+	    @Test
+	    public void testAtualizaClienteException() {
+	        ClienteDTO dto = new ClienteDTO();
+	        when(repository.findById(dto.getCodigo())).thenReturn(Optional.empty());
+
+	        assertThrows(ClienteException.class, () -> {
+	        	service.atualizaCliente(dto);
+	        });
+	    }	
+	    
+	    @Test
+	    public void testAtualizaClienteInexistenteException() throws ClienteException {
+	    	
+	        ClienteDTO dto = UtilTest.initClienteDTO();
+	        
+	        when(repository.existsById(any())).thenReturn(false);
+
+	        assertThrows(ClienteException.class, () -> {
+	        	service.atualizaCliente(dto);
+	        });
+	    }	    
+	    
+	    @Test
+	    public void testAtualizaClienteCPFException() throws ClienteException {
+	    	
+	        ClienteDTO dto = UtilTest.initClienteDTO();
+	        dto.setCpf("00099988822");
+
+	        Cliente cliente = UtilTest.initCliente();
+	        
+	        when(repository.existsById(any())).thenReturn(true);
+	        when(repository.findById(dto.getCodigo())).thenReturn(Optional.of(cliente));	        
+	        when(repository.validaCpfExistente(any())).thenReturn(1);
+	       
+	       
+
+	        assertThrows(ClienteException.class, () -> {
+	        	service.atualizaCliente(dto);
+	        });
+	    }		    
+	    
 }

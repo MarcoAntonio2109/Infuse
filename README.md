@@ -63,3 +63,12 @@ Base URL: http://localhost:8080/produto
 |    GET       | /produto/{id}    | Consulta produto por Id                    |
 |    DEL       | /produto/{id}    | Deleta produto por Id                    |
 
+## Documentação da API com Swagger
+
+Neste projeto, usamos o Swagger para documentar a API. O Swagger é uma ferramenta útil para desenvolvedores e usuários, pois fornece uma interface visual para interagir com a API e entender suas capacidades.
+Após iniciar a aplicação, você pode acessar a interface do Swagger UI visitando o seguinte URL: **http://localhost:8080/swagger-ui.html#/**
+
+Na interface do Swagger UI, você verá uma lista de todos os endpoints disponíveis na API. Clique em qualquer endpoint para expandir os detalhes. Você verá informações como a descrição do endpoint, os parâmetros que ele aceita, o formato do corpo da solicitação (se aplicável) e os possíveis códigos de resposta.
+
+Para testar um endpoint, clique no botão “Try it out”, preencha quaisquer parâmetros necessários e clique em “Execute”. Você verá a resposta da API diretamente na interface do Swagger.
+

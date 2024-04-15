@@ -14,7 +14,7 @@ O Infuse é um projeto desenvolvido por Marco Antonio Moreira (marco.baptista21@
 
 ## Pré requisitos
 
-1. Java 8
+1. Java 8 ou superior
 2. Banco de dados MySql
 3. Maven
 

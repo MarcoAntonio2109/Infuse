@@ -1,4 +1,4 @@
-package br.com.infuse.config;
+package br.com.infuse.crudsb.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
